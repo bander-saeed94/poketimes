@@ -1,11 +1,42 @@
-import React from 'react'
-
-const Home = () => {
-    return (
-        <div className="container">
-            <h4 className="center">Home</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat accusamus ratione error pariatur in est dolorum corporis? Ex sapiente deserunt reiciendis. Incidunt id optio omnis fuga, ut officiis alias corrupti.</p>
-        </div>
-    )
+import React, { Component } from 'react'
+import axios from "axios";
+import { Link } from 'react-router-dom'
+import Pokeball from '../pokeball.png'
+class Home extends Component {
+    state = {
+        posts: [],
+    }
+    async componentDidMount() {
+        let res = await axios.get('https://jsonplaceholder.typicode.com/posts');
+        this.setState({
+            posts: res.data.slice(0, 10)
+        })
+    }
+    render() {
+        const { posts } = this.state;
+        const postList = posts.length > 0 ? (
+            posts.map(post => {
+                return (
+                    <div className="post card" key={post.id}>
+                        <img src={Pokeball} alt="a boke ball"/>
+                        <div className="card-content">
+                            <Link to={'/posts/' + post.id} >
+                            <span className="card-title red-text">{post.title}</span>
+                            </Link>
+                            <p>{post.body}</p>
+                        </div>
+                    </div>
+                )
+            })
+        ) : (
+                <div className="center">No Posts yet</div>
+            )
+        return (
+            <div className="container home">
+                <h4 className="center">Home</h4>
+                {postList}
+            </div>
+        )
+    }
 }
 export default Home;
